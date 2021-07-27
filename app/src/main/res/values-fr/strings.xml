@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Movie App</string>
+    <string name="welcome">Bonjour, Bobby</string>
+    <string name="search">Rechercher</string>
+    <string name="bookmarks">Favoris</string>
+    <string name="home">Accueil</string>
+</resources>
