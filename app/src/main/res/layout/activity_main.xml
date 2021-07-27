@@ -37,9 +37,10 @@
                 />
 
             <LinearLayout
+                android:id="@+id/movie_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="onClickFilms"
+                android:onClick="onClickMovies"
             >
                 <ImageView
                     android:layout_width="100dp"
@@ -66,9 +67,10 @@
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/movie_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="onClickFilms"
+                android:onClick="onClickMovies"
             >
                 <ImageView
                     android:layout_width="100dp"

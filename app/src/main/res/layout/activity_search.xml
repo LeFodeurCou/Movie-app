@@ -9,6 +9,22 @@
     android:padding="@dimen/basic"
     android:background="@color/main_bg">
 
+    <TextView
+        android:id="@+id/extras"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+    />
+
+    <ScrollView
+        android:id="@+id/movie_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/extras"
+    >
+
+    </ScrollView>
+
     <Button
         android:id="@+id/home"
         android:layout_width="wrap_content"

@@ -28,18 +28,18 @@ public class MainActivity extends AppCompatActivity {
         this.welcome.setText(R.string.welcome);
 
         this.search = findViewById(R.id.search);
-        this.search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                    Intent myIntent = new Intent(v.getContext(), SearchActivity.class);
-                    startActivity(myIntent);
-                }
+        this.search.setOnClickListener(v -> {
+                Intent myIntent = new Intent(v.getContext(), SearchActivity.class);
+                myIntent.putExtra("msg", "Extra");
+                startActivity(myIntent);
             }
         );
     }
 
-    public void onClickFilms(View v)
+    public void onClickMovies(View v)
     {
-        Toast.makeText(this, "Film clicked", Toast.LENGTH_SHORT).show();
+        Intent myIntent = new Intent(v.getContext(), MovieActivity.class);
+        myIntent.putExtra("id_movie", getResources().getResourceName(v.getId()));
+        startActivity(myIntent);
     }
 }
