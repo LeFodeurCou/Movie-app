@@ -4,4 +4,5 @@
     <string name="search">Rechercher</string>
     <string name="bookmarks">Favoris</string>
     <string name="home">Accueil</string>
+    <string name="about">A propos de ce film</string>
 </resources>
