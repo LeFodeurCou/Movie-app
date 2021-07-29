@@ -1,11 +1,15 @@
 package com.lefodeurcou.movieapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -27,6 +31,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.lefodeurcou.movieapp.adapters.SearchAdapter;
 import com.lefodeurcou.movieapp.models.Movie;
 import com.lefodeurcou.movieapp.utils.ApiFetch;
 import com.squareup.picasso.Picasso;
@@ -43,7 +48,7 @@ public class SearchActivity extends AppCompatActivity {
     private TextView extras;
     private ScrollView movie_list;
     private ArrayList<Movie> movies = new ArrayList<>();
-    private LinearLayout wrapper;
+    private RecyclerView wrapper;
     private EditText searchField;
 
     @Override
@@ -62,6 +67,7 @@ public class SearchActivity extends AppCompatActivity {
         super.onStart();
 
         this.movie_list = findViewById(R.id.movie_list);
+        this.wrapper = findViewById(R.id.recycler);
 
         this.searchField = findViewById(R.id.search_field);
         this.searchField.setOnEditorActionListener((tv, i, keyEvent) -> {
@@ -112,18 +118,28 @@ public class SearchActivity extends AppCompatActivity {
 
     public void onClickGo(View v)
     {
-        this.movie_list.removeAllViews();
-        this.wrapper = new LinearLayout(getApplicationContext());
-        this.wrapper.setOrientation(LinearLayout.VERTICAL);
-        this.wrapper.setLayoutParams(new LinearLayout
-                .LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        ));
-        this.movie_list.addView(this.wrapper);
+//        this.movie_list.removeAllViews();
+//        this.wrapper = new LinearLayout(getApplicationContext());
+//        this.wrapper = new RecyclerView(getApplicationContext());
+//        this.wrapper.removeAllViews();
+        this.movies.removeAll(this.movies);
+        this.wrapper.setLayoutManager(new GridLayoutManager(this, 3));
+        this.wrapper.setAdapter(new SearchAdapter(this, movies));
+//        this.wrapper.setOrientation(LinearLayout.VERTICAL);
+//        this.wrapper.setLayoutParams(new LinearLayout
+//                .LayoutParams(
+//                ViewGroup.LayoutParams.MATCH_PARENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT
+//        ));
+//        this.movie_list.addView(this.wrapper);
 
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(this.searchField.getWindowToken(), 0);
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected())
+            return;
 
         String url = "http://www.omdbapi.com/?apikey=bf4e1adb&s=".concat(String.valueOf(this.searchField.getText()));
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
@@ -155,16 +171,16 @@ public class SearchActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                             SearchActivity.this.movies.add(movie);
-                            LinearLayout movie_view = SearchActivity.this.createMovieRow(movie);
-                            movie_view.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent myIntent = new Intent(v.getContext(), MovieActivity.class);
-                                    myIntent.putExtra("imdb", movie.getIMDb());
-                                    startActivity(myIntent);
-                                }
-                            });
-                            SearchActivity.this.wrapper.addView(movie_view);
+//                            LinearLayout movie_view = SearchActivity.this.createMovieRow(movie);
+//                            movie_view.setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    Intent myIntent = new Intent(v.getContext(), MovieActivity.class);
+//                                    myIntent.putExtra("imdb", movie.getIMDb());
+//                                    startActivity(myIntent);
+//                                }
+//                            });
+//                            SearchActivity.this.wrapper.addView(movie_view);
                         }
                         Log.d("lol", "success");
                     }
