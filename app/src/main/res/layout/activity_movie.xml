@@ -35,9 +35,9 @@
                 android:layout_height="wrap_content"
             >
                 <ImageView
+                    android:id="@+id/poster"
                     android:layout_width="150dp"
                     android:layout_height="75dp"
-                    android:src="@drawable/lor"
                 />
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -48,19 +48,19 @@
                         android:id="@+id/title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Title"
+                        android:text=""
                     />
                     <TextView
                         android:id="@+id/date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="date"
+                        android:text=""
                     />
                     <TextView
                         android:id="@+id/genre"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="genre"
+                        android:text=""
                     />
                 </LinearLayout>
             </LinearLayout>
@@ -75,13 +75,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="3"
-                android:text="Plot"
+                android:text=""
             />
             <Button
                 android:id="@+id/see_more"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="See more"
+                android:text="@string/see_more"
                 android:layout_gravity="center"
                 android:background="@color/transparent"
                 android:textColor="@color/teal_700"
@@ -96,19 +96,19 @@
                 android:id="@+id/director"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Director"
+                android:text=""
             />
             <TextView
                 android:id="@+id/actors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Actors"
+                android:text=""
             />
             <TextView
                 android:id="@+id/awards"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Awards"
+                android:text=""
             />
 
             <View
@@ -118,4 +118,15 @@
                 />
         </LinearLayout>
     </ScrollView>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+    />
+
 </RelativeLayout>

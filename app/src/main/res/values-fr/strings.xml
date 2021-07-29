@@ -6,4 +6,6 @@
     <string name="bookmarks">Favoris</string>
     <string name="home">Accueil</string>
     <string name="about">A propos de ce filme</string>
+    <string name="go">Go</string>
+    <string name="see_more">Voir plus</string>
 </resources>

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Movie
 {
+    private String IMDb;
     private String title;
     private String desc;
     private String genre;
@@ -12,18 +13,22 @@ public class Movie
     private String released;
     private String actors;
     private String awards;
-    private int img;
+    private String imgUrl;
 
     public Movie()
     {
 
     }
 
-    public Movie(String title, String desc, int img)
+    public Movie(String title, String desc, String imgUrl)
     {
         this.title = title;
         this.desc = desc;
-        this.img = img;
+        this.imgUrl = imgUrl;
+    }
+
+    public String getIMDb() {
+        return IMDb;
     }
 
     public String getTitle()
@@ -36,9 +41,8 @@ public class Movie
         return this.desc;
     }
 
-    public int getImg()
-    {
-        return this.img;
+    public String getImgUrl() {
+        return imgUrl;
     }
 
     public String getGenre() {
@@ -63,6 +67,10 @@ public class Movie
 
     public String getDate() {
         return date;
+    }
+
+    public void setIMDb(String IMDb) {
+        this.IMDb = IMDb;
     }
 
     public void setTitle(String title) {
@@ -97,7 +105,7 @@ public class Movie
         this.date = date;
     }
 
-    public void setImg(int img) {
-        this.img = img;
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 }

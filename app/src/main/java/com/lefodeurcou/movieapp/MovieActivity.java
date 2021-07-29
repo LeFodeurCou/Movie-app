@@ -3,13 +3,27 @@ package com.lefodeurcou.movieapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.lefodeurcou.movieapp.models.Movie;
+import com.lefodeurcou.movieapp.utils.ApiFetch;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,6 +41,11 @@ public class MovieActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE); //will hide the title
+        getSupportActionBar().hide(); // hide the title bar
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN); //enable full screen
         setContentView(R.layout.activity_movie);
 
         this.input_movie = "{" +
@@ -70,10 +89,8 @@ public class MovieActivity extends AppCompatActivity {
                 "}";
 
         try {
-//            this.parsed_movie = new JSONObject(this.input_movie);
-            this.getAssets().open("movie_one").;
-            this.parsed_movie = new JSONObject();
-        } catch (JSONException | IOException e) {
+            this.parsed_movie = new JSONObject(this.input_movie);
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -83,22 +100,43 @@ public class MovieActivity extends AppCompatActivity {
         super.onStart();
 
         Bundle extras = getIntent().getExtras();
-        this.extras = findViewById(R.id.extras);
-        this.extras.setText(extras.getCharSequence("id_movie"));
+        // IMDb for Star Wars
+        String url = "http://www.omdbapi.com/?apikey=bf4e1adb&i=".concat(String.valueOf(extras.getCharSequence("imdb", "tt0076759")));
+        Log.d("lol", url);
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, response -> {
+                    try {
+                        Log.d("lol", response.toString());
+                        if (response.getString("Response") == "False")
+                            return;
+                        MovieActivity.this.movie.setTitle(response.getString("Title"));
+                        MovieActivity.this.movie.setDate(response.getString("Released"));;
+                        MovieActivity.this.movie.setDesc(response.getString("Plot"));;
+                        MovieActivity.this.movie.setGenre(response.getString("Genre"));;
+                        MovieActivity.this.movie.setReleased(response.getString("Released"));
+                        MovieActivity.this.movie.setDirector(response.getString("Director"));
+                        MovieActivity.this.movie.setActors(response.getString("Actors"));
+                        MovieActivity.this.movie.setAwards(response.getString("Awards"));
+                        MovieActivity.this.movie.setImgUrl(response.getString("Poster"));
+                        this.updateUi();
+                        progressBar.setVisibility(View.GONE);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("lol", "success");
+                }, new Response.ErrorListener() {
 
-        try {
-            this.movie.setTitle(this.parsed_movie.getString("Title"));
-            this.movie.setDate(this.parsed_movie.getString("Released"));;
-            this.movie.setDesc(this.parsed_movie.getString("Plot"));;
-            this.movie.setGenre(this.parsed_movie.getString("Genre"));;
-            this.movie.setReleased(this.parsed_movie.getString("Released"));
-            this.movie.setDirector(this.parsed_movie.getString("Director"));
-            this.movie.setActors(this.parsed_movie.getString("Actors"));
-            this.movie.setAwards(this.parsed_movie.getString("Awards"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        this.updateUi();
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("lol", "failure");
+                        // TODO: Handle error
+
+                    }
+                });
+        ApiFetch.getInstance(this).addToRequestQueue(jsonObjectRequest);
+
         Button seeMore = findViewById(R.id.see_more);
         seeMore.setOnClickListener(v -> {
             TextView plot = findViewById(R.id.plot);
@@ -125,5 +163,16 @@ public class MovieActivity extends AppCompatActivity {
         text.setText("Actors : ".concat(this.movie.getActors()));
         text = findViewById(R.id.awards);
         text.setText("Awards : ".concat(this.movie.getAwards()));
+        ImageView poster = findViewById(R.id.poster);
+        poster.setLayoutParams(new LinearLayout
+                .LayoutParams(
+                200 * (int) getResources().getDisplayMetrics().density,
+                200 * (int) getResources().getDisplayMetrics().density
+        ));
+        Picasso.get()
+                .load(this.movie.getImgUrl())
+//                .placeholder(R.drawable.user_placeholder)
+//                .error(R.drawable.user_placeholder_error)
+                .into(poster);
     }
 }
