@@ -124,6 +124,7 @@ public class SearchActivity extends AppCompatActivity {
 
     public void onClickGo(View v)
     {
+        this.page = 1;
         this.movies.removeAll(this.movies);
         this.wrapper.removeAllViews();
 
