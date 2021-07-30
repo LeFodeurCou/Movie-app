@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Toast.makeText(this, "toto", Toast.LENGTH_SHORT).show();
 //        this.welcome = findViewById(R.id.welcome);
 //        this.welcome.setText(R.string.welcome);
 
