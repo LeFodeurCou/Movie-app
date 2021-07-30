@@ -10,10 +10,42 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
     >
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/app_name"
+            android:gravity="bottom"
+            android:textColor="#ffffff"
+            android:textSize="32sp"
+            android:padding="@dimen/basic"
+        />
     </com.google.android.material.appbar.AppBarLayout>
+    <ImageView
+        android:id="@+id/angry_btn"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/rounded"
+        android:layout_marginTop="125dp"
+        android:layout_marginRight="50dp"
+        android:layout_alignParentRight="true"
+        android:elevation="7dp"
+        android:outlineAmbientShadowColor="@color/black"
+        android:onClick="onClickBookmark"
+    />
+    <ImageView
+        android:id="@+id/heart"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/heart"
+        android:layout_marginTop="140dp"
+        android:layout_marginRight="65dp"
+        android:layout_alignParentRight="true"
+        android:elevation="7dp"
+        android:outlineAmbientShadowColor="@color/black"
+        android:onClick="onClickBookmark"
+    />
     <TextView
         android:id="@+id/extras"
         android:layout_width="wrap_content"

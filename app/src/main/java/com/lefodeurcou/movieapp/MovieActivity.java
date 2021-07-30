@@ -1,11 +1,14 @@
 package com.lefodeurcou.movieapp;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,8 +39,6 @@ public class MovieActivity extends AppCompatActivity {
 
     private TextView extras;
     private Movie movie = new Movie();
-    private String input_movie;
-    private JSONObject parsed_movie;
     private Boolean isSeeMoreClicked = false;
 
     @Override
@@ -49,52 +50,6 @@ public class MovieActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN); //enable full screen
         setContentView(R.layout.activity_movie);
-
-        this.input_movie = "{" +
-                "  \"Title\": \"Star Wars: Episode IV - A New Hope\"," +
-                "  \"Year\": \"1977\"," +
-                "  \"Rated\": \"PG\"," +
-                "  \"Released\": \"25 May 1977\"," +
-                "  \"Runtime\": \"121 min\"," +
-                "  \"Genre\": \"Action, Adventure, Fantasy, Sci-Fi\"," +
-                "  \"Director\": \"George Lucas\"," +
-                "  \"Writer\": \"George Lucas\"," +
-                "  \"Actors\": \"Mark Hamill, Harrison Ford, Carrie Fisher, Peter Cushing\"," +
-                "  \"Plot\": \"The Imperial Forces, under orders from cruel Darth Vader, hold Princess Leia hostage in their efforts to quell the rebellion against the Galactic Empire. Luke Skywalker and Han Solo, captain of the Millennium Falcon, work together with the companionable droid duo R2-D2 and C-3PO to rescue the beautiful princess, help the Rebel Alliance and restore freedom and justice to the Galaxy.\"," +
-                "  \"Language\": \"English\"," +
-                "  \"Country\": \"USA\"," +
-                "  \"Awards\": \"Won 6 Oscars. Another 52 wins & 28 nominations.\"," +
-                "  \"Poster\": \"https://m.media-amazon.com/images/M/MV5BNzVlY2MwMjktM2E4OS00Y2Y3LWE3ZjctYzhkZGM3YzA1ZWM2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg\"," +
-                "  \"Ratings\": [" +
-                "    {" +
-                "      \"Source\": \"Internet Movie Database\"," +
-                "      \"Value\": \"8.6/10\"" +
-                "    }," +
-                "    {" +
-                "      \"Source\": \"Rotten Tomatoes\"," +
-                "      \"Value\": \"92%\"" +
-                "    }," +
-                "    {" +
-                "      \"Source\": \"Metacritic\"," +
-                "      \"Value\": \"90/100\"" +
-                "    }" +
-                "  ]," +
-                "  \"Metascore\": \"90\"," +
-                "  \"imdbRating\": \"8.6\"," +
-                "  \"imdbVotes\": \"1,181,083\"," +
-                "  \"imdbID\": \"tt0076759\"," +
-                "  \"Type\": \"movie\"," +
-                "  \"DVD\": \"21 Sep 2004\"," +
-                "  \"BoxOffice\": \"N/A\"," +
-                "  \"Production\": \"20th Century Fox\", \"Website\": \"N/A\"," +
-                "  \"Response\": \"True\"" +
-                "}";
-
-        try {
-            this.parsed_movie = new JSONObject(this.input_movie);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -127,6 +82,7 @@ public class MovieActivity extends AppCompatActivity {
                         MovieActivity.this.movie.setActors(response.getString("Actors"));
                         MovieActivity.this.movie.setAwards(response.getString("Awards"));
                         MovieActivity.this.movie.setImgUrl(response.getString("Poster"));
+                        MovieActivity.this.movie.setIMDb(response.getString("imdbID"));
                         this.updateUi();
                         progressBar.setVisibility(View.GONE);
                     } catch (JSONException e) {
@@ -181,5 +137,37 @@ public class MovieActivity extends AppCompatActivity {
 //                .placeholder(R.drawable.user_placeholder)
 //                .error(R.drawable.user_placeholder_error)
                 .into(poster);
+
+        SharedPreferences preferences = getSharedPreferences("bookmarks", Context.MODE_PRIVATE);
+        String bookmarks = preferences.getString(this.movie.getIMDb(), "");
+        if (!bookmarks.equals("")) {
+            ImageView img = findViewById(R.id.heart);
+            img.setBackgroundResource(R.drawable.heart_red);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void onClickBookmark(View view)
+    {
+        SharedPreferences preferences = getSharedPreferences("bookmarks", Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = preferences.edit();
+        String imdb = this.movie.getIMDb();
+
+        String bookmarks = preferences.getString(imdb, "");
+        if (bookmarks.equals("")) {
+            edit.putString(imdb, imdb);
+            ImageView img = findViewById(R.id.heart);
+            img.setBackgroundResource(R.drawable.heart_red);
+            Log.d("lol", "Put movie");
+        }
+        else {
+            edit.remove(imdb);
+            ImageView img = findViewById(R.id.heart);
+            img.setBackgroundResource(R.drawable.heart);
+            Log.d("lol", "Remove movie");
+        }
+        edit.commit();
+        Log.d("lol", "Clicked");
+        Log.d("lol", preferences.getString(imdb, "default"));
     }
 }

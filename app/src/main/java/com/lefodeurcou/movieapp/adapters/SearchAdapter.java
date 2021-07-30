@@ -2,6 +2,7 @@ package com.lefodeurcou.movieapp.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.lefodeurcou.movieapp.MovieActivity;
 import com.lefodeurcou.movieapp.R;
+import com.lefodeurcou.movieapp.SearchActivity;
 import com.lefodeurcou.movieapp.models.Movie;
 import com.squareup.picasso.Picasso;
 
@@ -73,8 +75,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     public void onBindViewHolder(@NonNull @org.jetbrains.annotations.NotNull SearchAdapter.ViewHolder holder, int position) {
         Picasso.get()
                 .load(this.movies.get(position).getImgUrl())
-//                .placeholder(R.drawable.user_placeholder)
-//                .error(R.drawable.user_placeholder_error)
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.error_placeholder)
                 .into(holder.getSearch_img());
         holder.getSearch_title().setText(String.valueOf(SearchAdapter.this.movies.get(position).getTitle()));
         holder.getSearch_date().setText(String.valueOf(SearchAdapter.this.movies.get(position).getReleased()));
@@ -86,6 +88,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                 context.startActivity(myIntent);
             }
         });
+        if (this.context.getClass() == SearchActivity.class && position == this.movies.size() - 1)
+            ((SearchActivity) this.context).loadPage();
     }
 
     @Override

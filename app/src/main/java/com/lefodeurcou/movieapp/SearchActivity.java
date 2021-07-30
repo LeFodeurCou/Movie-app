@@ -50,6 +50,9 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<Movie> movies = new ArrayList<>();
     private RecyclerView wrapper;
     private EditText searchField;
+    private String url;
+    private SearchAdapter searchAdapter;
+    private int page = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +71,13 @@ public class SearchActivity extends AppCompatActivity {
 
         this.movie_list = findViewById(R.id.movie_list);
         this.wrapper = findViewById(R.id.recycler);
+        this.wrapper.setLayoutManager(new GridLayoutManager(this, 3));
+        this.searchAdapter = new SearchAdapter(this, movies);
+        this.wrapper.setAdapter(this.searchAdapter);
 
         this.searchField = findViewById(R.id.search_field);
         this.searchField.setOnEditorActionListener((tv, i, keyEvent) -> {
-            if(i== EditorInfo.IME_ACTION_DONE){
+            if(i == EditorInfo.IME_ACTION_DONE){
                 SearchActivity.this.onClickGo(tv);
             }
             return false;
@@ -118,20 +124,8 @@ public class SearchActivity extends AppCompatActivity {
 
     public void onClickGo(View v)
     {
-//        this.movie_list.removeAllViews();
-//        this.wrapper = new LinearLayout(getApplicationContext());
-//        this.wrapper = new RecyclerView(getApplicationContext());
-//        this.wrapper.removeAllViews();
         this.movies.removeAll(this.movies);
-        this.wrapper.setLayoutManager(new GridLayoutManager(this, 3));
-        this.wrapper.setAdapter(new SearchAdapter(this, movies));
-//        this.wrapper.setOrientation(LinearLayout.VERTICAL);
-//        this.wrapper.setLayoutParams(new LinearLayout
-//                .LayoutParams(
-//                ViewGroup.LayoutParams.MATCH_PARENT,
-//                ViewGroup.LayoutParams.WRAP_CONTENT
-//        ));
-//        this.movie_list.addView(this.wrapper);
+        this.wrapper.removeAllViews();
 
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(this.searchField.getWindowToken(), 0);
@@ -140,10 +134,14 @@ public class SearchActivity extends AppCompatActivity {
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         if (networkInfo == null || !networkInfo.isConnected())
             return;
+        this.url = "http://www.omdbapi.com/?apikey=bf4e1adb&s=".concat(String.valueOf(this.searchField.getText()));
+        loadPage();
+    }
 
-        String url = "http://www.omdbapi.com/?apikey=bf4e1adb&s=".concat(String.valueOf(this.searchField.getText()));
+    public void loadPage()
+    {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                (Request.Method.GET, this.url + "&page=" + String.valueOf(this.page), null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
@@ -165,23 +163,14 @@ public class SearchActivity extends AppCompatActivity {
                                 JSONObject jsonObject = respArray.getJSONObject(i);
                                 movie.setIMDb(jsonObject.getString("imdbID"));
                                 movie.setTitle(jsonObject.getString("Title"));
-                                movie.setDesc(jsonObject.getString("Year"));
+                                movie.setReleased(jsonObject.getString("Year"));
                                 movie.setImgUrl(jsonObject.getString("Poster"));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                             SearchActivity.this.movies.add(movie);
-//                            LinearLayout movie_view = SearchActivity.this.createMovieRow(movie);
-//                            movie_view.setOnClickListener(new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    Intent myIntent = new Intent(v.getContext(), MovieActivity.class);
-//                                    myIntent.putExtra("imdb", movie.getIMDb());
-//                                    startActivity(myIntent);
-//                                }
-//                            });
-//                            SearchActivity.this.wrapper.addView(movie_view);
                         }
+                        SearchActivity.this.searchAdapter.notifyDataSetChanged();
                         Log.d("lol", "success");
                     }
                 }, new Response.ErrorListener() {
@@ -194,5 +183,7 @@ public class SearchActivity extends AppCompatActivity {
                     }
                 });
         ApiFetch.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        this.page++;
+        Log.d("lol", "Load next page (method)");
     }
 }
